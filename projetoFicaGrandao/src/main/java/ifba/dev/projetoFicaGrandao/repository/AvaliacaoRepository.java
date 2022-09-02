@@ -4,7 +4,9 @@ import ifba.dev.projetoFicaGrandao.domain.Avaliacao;
 
 import java.util.List;
 
-public interface AvaliacaoRepository {
-    List<Avaliacao> listAll();
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AvaliacaoRepository extends JpaRepository<Avaliacao, Long>{
+	List<Avaliacao> findByNome(String nome);
 }
 

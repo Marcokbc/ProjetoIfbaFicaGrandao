@@ -4,7 +4,9 @@ import ifba.dev.projetoFicaGrandao.domain.Aluno;
 
 import java.util.List;
 
-public interface AlunoRepository {
-    List<Aluno> listAll();
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AlunoRepository extends JpaRepository<Aluno, Long>{
+	List<Aluno> findByNome(String nome);
 }
 

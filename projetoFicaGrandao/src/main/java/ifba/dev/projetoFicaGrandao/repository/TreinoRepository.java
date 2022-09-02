@@ -4,7 +4,9 @@ import ifba.dev.projetoFicaGrandao.domain.Treino;
 
 import java.util.List;
 
-public interface TreinoRepository {
-    List<Treino> listAll();
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TreinoRepository extends JpaRepository<Treino, Long>{
+	List<Treino> findByNome(String nome);
 }
 

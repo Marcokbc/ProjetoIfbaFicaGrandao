@@ -1,37 +1,52 @@
 package ifba.dev.projetoFicaGrandao.service;
 
 import ifba.dev.projetoFicaGrandao.domain.Aluno;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import ifba.dev.projetoFicaGrandao.repository.AlunoRepository;
+import ifba.dev.projetoFicaGrandao.requests.AlunoPostRequestBody;
+import ifba.dev.projetoFicaGrandao.mapper.AlunoMapper;
+import ifba.dev.projetoFicaGrandao.requests.AlunoPutRequestBody;
+import ifba.dev.projetoFicaGrandao.exception.BadRequestException;
+import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+
+import javax.transaction.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class AlunoService {
-    private static List<Aluno> alunos;
-
-    static {
-    	alunos = new ArrayList<>(List.of(new Aluno(1L, "2309470234","9340593405","Marco","marco@gmail.com","academia","07/02/2004","46100000","santa teresa","brumado","bahia")));
-    }
-
-    // private final AnimeRepository animeRepository;
+    
+    private final AlunoRepository alunoRepository;
     public List<Aluno> listAll() {
-        return alunos;
+        return alunoRepository.findAll();
+    }
+    
+    public List<Aluno> findByNome(String nome){
+    	return alunoRepository.findByNome(nome);
     }
 
-    public Aluno findById(long id) {
-        return alunos.stream()
-                .filter(aluno -> aluno.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aluno not Found"));
+    public Aluno findByIdOrThrowBadRequestException(long id) {
+        return alunoRepository.findById(id)
+        		.orElseThrow(() -> new BadRequestException("Aluno not Found"));
     }
 
-    public Aluno save(Aluno aluno) {
-        aluno.setId(ThreadLocalRandom.current().nextLong(3, 100000));
-        alunos.add(aluno);
-        return aluno;
+    @Transactional
+    public Aluno save(AlunoPostRequestBody alunoPostRequestBody) {
+        return alunoRepository.save(AlunoMapper.INSTANCE.toAluno(alunoPostRequestBody));
     }
+
+	public void delete(long id) {
+		alunoRepository.delete(findByIdOrThrowBadRequestException(id));
+	}
+
+	public void replace(AlunoPutRequestBody alunoPutRequestBody) {
+		Aluno savedAluno = findByIdOrThrowBadRequestException(alunoPutRequestBody.getId());
+		Aluno aluno = AlunoMapper.INSTANCE.toAluno(alunoPutRequestBody);
+        aluno.setId(savedAluno.getId());
+
+        alunoRepository.save(aluno);
+		
+	}
 }

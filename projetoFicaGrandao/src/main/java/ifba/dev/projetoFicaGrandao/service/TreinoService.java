@@ -1,6 +1,14 @@
 package ifba.dev.projetoFicaGrandao.service;
 
 import ifba.dev.projetoFicaGrandao.domain.Treino;
+import ifba.dev.projetoFicaGrandao.exception.BadRequestException;
+import ifba.dev.projetoFicaGrandao.mapper.TreinoMapper;
+import ifba.dev.projetoFicaGrandao.repository.AlunoRepository;
+import ifba.dev.projetoFicaGrandao.repository.TreinoRepository;
+import ifba.dev.projetoFicaGrandao.requests.TreinoPostRequestBody;
+import ifba.dev.projetoFicaGrandao.requests.TreinoPutRequestBody;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -9,29 +17,40 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.transaction.Transactional;
+
 @Service
+@RequiredArgsConstructor
 public class TreinoService {
-    private static List<Treino> treinos;
-
-    static {
-    	treinos = new ArrayList<>(List.of(new Treino(1L,"A","Supino")));
-    }
-
-    // private final AnimeRepository animeRepository;
+	private final TreinoRepository treinoRepository;
     public List<Treino> listAll() {
-        return treinos;
+        return treinoRepository.findAll();
+    }
+    
+    public List<Treino> findByNome(String nome){
+    	return treinoRepository.findByNome(nome);
     }
 
-    public Treino findById(long id) {
-        return treinos.stream()
-                .filter(treino -> treino.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Treino not Found"));
+    public Treino findByIdOrThrowBadRequestException(long id) {
+        return treinoRepository.findById(id)
+        		.orElseThrow(() -> new BadRequestException("Treino not Found"));
     }
 
-    public Treino save(Treino treino) {
-        treino.setId(ThreadLocalRandom.current().nextLong(3, 100000));
-        treinos.add(treino);
-        return treino;
+    @Transactional
+    public Treino save(TreinoPostRequestBody treinoPostRequestBody) {
+        return treinoRepository.save(TreinoMapper.INSTANCE.toTreino(treinoPostRequestBody));
     }
+
+	public void delete(long id) {
+		treinoRepository.delete(findByIdOrThrowBadRequestException(id));
+	}
+
+	public void replace(TreinoPutRequestBody treinoPutRequestBody) {
+		Treino savedTreino = findByIdOrThrowBadRequestException(treinoPutRequestBody.getId());
+		Treino treino = TreinoMapper.INSTANCE.toTreino(treinoPutRequestBody);
+        treino.setId(savedTreino.getId());
+
+        treinoRepository.save(treino);
+		
+	}
 }
