@@ -2,20 +2,14 @@ package ifba.dev.projetoFicaGrandao.service;
 
 import ifba.dev.projetoFicaGrandao.domain.Instrutor;
 import ifba.dev.projetoFicaGrandao.exception.BadRequestException;
-import ifba.dev.projetoFicaGrandao.mapper.InstrutorMapper;
-import ifba.dev.projetoFicaGrandao.repository.AlunoRepository;
 import ifba.dev.projetoFicaGrandao.repository.InstrutorRepository;
 import ifba.dev.projetoFicaGrandao.requests.InstrutorPostRequestBody;
 import ifba.dev.projetoFicaGrandao.requests.InstrutorPutRequestBody;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.transaction.Transactional;
 
@@ -38,7 +32,18 @@ public class InstrutorService {
 
     @Transactional
     public Instrutor save(InstrutorPostRequestBody instrutorPostRequestBody) {
-        return instrutorRepository.save(InstrutorMapper.INSTANCE.toInstrutor(instrutorPostRequestBody));
+        return instrutorRepository.save(Instrutor.builder()
+        		.nome(instrutorPostRequestBody.getNome())
+        		.bairro(instrutorPostRequestBody.getBairro())
+        		.cidade(instrutorPostRequestBody.getCidade())
+        		.cep(instrutorPostRequestBody.getCep())
+        		.datanasc(instrutorPostRequestBody.getDatanasc())
+        		.email(instrutorPostRequestBody.getEmail())
+        		.endereco(instrutorPostRequestBody.getEndereco())
+        		.estado(instrutorPostRequestBody.getEstado())
+        		.senha(instrutorPostRequestBody.getSenha())
+        		.build());
+        
     }
 
 	public void delete(long id) {
@@ -47,8 +52,18 @@ public class InstrutorService {
 
 	public void replace(InstrutorPutRequestBody instrutorPutRequestBody) {
 		Instrutor savedInstrutor = findByIdOrThrowBadRequestException(instrutorPutRequestBody.getId());
-		Instrutor instrutor = InstrutorMapper.INSTANCE.toInstrutor(instrutorPutRequestBody);
-        instrutor.setId(savedInstrutor.getId());
+		Instrutor instrutor  = Instrutor.builder()
+                .id(savedInstrutor.getId())
+                .nome(instrutorPutRequestBody.getNome())
+                .bairro(instrutorPutRequestBody.getBairro())
+        		.cidade(instrutorPutRequestBody.getCidade())
+        		.cep(instrutorPutRequestBody.getCep())
+        		.datanasc(instrutorPutRequestBody.getDatanasc())
+        		.email(instrutorPutRequestBody.getEmail())
+        		.endereco(instrutorPutRequestBody.getEndereco())
+        		.estado(instrutorPutRequestBody.getEstado())
+        		.senha(instrutorPutRequestBody.getSenha())
+                .build();
 
         instrutorRepository.save(instrutor);
 		

@@ -2,20 +2,14 @@ package ifba.dev.projetoFicaGrandao.service;
 
 import ifba.dev.projetoFicaGrandao.domain.Treino;
 import ifba.dev.projetoFicaGrandao.exception.BadRequestException;
-import ifba.dev.projetoFicaGrandao.mapper.TreinoMapper;
-import ifba.dev.projetoFicaGrandao.repository.AlunoRepository;
 import ifba.dev.projetoFicaGrandao.repository.TreinoRepository;
 import ifba.dev.projetoFicaGrandao.requests.TreinoPostRequestBody;
 import ifba.dev.projetoFicaGrandao.requests.TreinoPutRequestBody;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.transaction.Transactional;
 
@@ -26,10 +20,6 @@ public class TreinoService {
     public List<Treino> listAll() {
         return treinoRepository.findAll();
     }
-    
-    public List<Treino> findByNome(String nome){
-    	return treinoRepository.findByNome(nome);
-    }
 
     public Treino findByIdOrThrowBadRequestException(long id) {
         return treinoRepository.findById(id)
@@ -38,7 +28,10 @@ public class TreinoService {
 
     @Transactional
     public Treino save(TreinoPostRequestBody treinoPostRequestBody) {
-        return treinoRepository.save(TreinoMapper.INSTANCE.toTreino(treinoPostRequestBody));
+        return treinoRepository.save(Treino.builder()
+        		.divisao(treinoPostRequestBody.getDivisao())
+        		.exercicio(treinoPostRequestBody.getExercicio())
+        		.build());
     }
 
 	public void delete(long id) {
@@ -47,8 +40,11 @@ public class TreinoService {
 
 	public void replace(TreinoPutRequestBody treinoPutRequestBody) {
 		Treino savedTreino = findByIdOrThrowBadRequestException(treinoPutRequestBody.getId());
-		Treino treino = TreinoMapper.INSTANCE.toTreino(treinoPutRequestBody);
-        treino.setId(savedTreino.getId());
+		Treino treino = Treino.builder()
+                .id(savedTreino.getId())
+                .divisao(treinoPutRequestBody.getDivisao())
+                .exercicio(treinoPutRequestBody.getExercicio())
+                .build();
 
         treinoRepository.save(treino);
 		

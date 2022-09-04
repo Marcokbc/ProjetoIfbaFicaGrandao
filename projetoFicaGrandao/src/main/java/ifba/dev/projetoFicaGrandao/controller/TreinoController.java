@@ -38,11 +38,6 @@ public class TreinoController {
         return ResponseEntity.ok(treinoService.findByIdOrThrowBadRequestException(id));
     }
     
-    @GetMapping(path = "/find")
-    public ResponseEntity<List<Treino>> findByNome(@RequestParam String nome){
-        return ResponseEntity.ok(treinoService.findByNome(nome));
-    }
-    
     @PostMapping
     public ResponseEntity<Treino> save(@RequestBody @Valid TreinoPostRequestBody treinoPostRequestBody){
         return new ResponseEntity<>(treinoService.save(treinoPostRequestBody), HttpStatus.CREATED);

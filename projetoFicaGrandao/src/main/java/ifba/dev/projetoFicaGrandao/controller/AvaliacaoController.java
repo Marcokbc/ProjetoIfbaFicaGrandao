@@ -23,7 +23,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("avaliacao")
+@RequestMapping("avaliacoes")
 @RequiredArgsConstructor
 public class AvaliacaoController {
 	private final AvaliacaoService avaliacaoService;
@@ -36,11 +36,6 @@ public class AvaliacaoController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<Avaliacao> findById(@PathVariable long id){
         return ResponseEntity.ok(avaliacaoService.findByIdOrThrowBadRequestException(id));
-    }
-    
-    @GetMapping(path = "/find")
-    public ResponseEntity<List<Avaliacao>> findByNome(@RequestParam String nome){
-        return ResponseEntity.ok(avaliacaoService.findByNome(nome));
     }
     
     @PostMapping
