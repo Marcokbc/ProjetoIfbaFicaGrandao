@@ -9,7 +9,7 @@ spring:
     #password: remoto
     url: jdbc:mysql://localhost:3306/academia?useSSL=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true 
     username: root
-    password: 
+    password: 12345678
   jpa:
     hibernate:
       ddl-auto: update   

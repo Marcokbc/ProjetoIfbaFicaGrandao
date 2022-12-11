@@ -58,6 +58,7 @@ public class AlunoService {
                 .nome(alunoPutRequestBody.getNome())
                 .bairro(alunoPutRequestBody.getBairro())
         		.cep(alunoPutRequestBody.getCep())
+        		.telefone(alunoPutRequestBody.getTelefone())
         		.cidade(alunoPutRequestBody.getCidade())
         		.cpf(alunoPutRequestBody.getCpf())
         		.datanasc(alunoPutRequestBody.getDatanasc())
